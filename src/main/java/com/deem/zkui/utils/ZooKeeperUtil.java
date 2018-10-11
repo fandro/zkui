@@ -20,6 +20,8 @@ package com.deem.zkui.utils;
 import com.deem.zkui.vo.LeafBean;
 import com.deem.zkui.vo.ZKNode;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -342,6 +344,11 @@ public enum ZooKeeperUtil {
         //Reason exception is caught here is so that lookup can continue to happen if a particular property is not found at parent level.
         try {
             logger.trace("Lookup: path=" + path + ",childPath=" + childPath + ",child=" + child + ",authRole=" + authRole);
+            try {
+                child = URLDecoder.decode(child,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                logger.error("decode异常：" + e.getMessage());
+            }
             byte[] dataBytes = zk.getData(childPath, false, new Stat());
             if (!authRole.equals(ROLE_ADMIN)) {
                 if (checkIfPwdField(child)) {
